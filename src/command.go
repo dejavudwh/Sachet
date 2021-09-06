@@ -13,8 +13,8 @@ var initCommand = cli.Command{
 	Usage: `init container process run user's process in container.
 			-- Do not call it outside.`,
 	/*
-		init container
-	*/
+	* init container
+	 */
 	Action: func(c *cli.Context) error {
 		log.Infof("Init contanier ...")
 		cmd := c.Args().Get(0)
@@ -37,8 +37,8 @@ var runCommand = cli.Command{
 		},
 	},
 	/*
-		run container
-	*/
+	* launch container
+	 */
 	Action: func(c *cli.Context) error {
 		// determine the length of the command
 		if len(c.Args()) < 1 {
