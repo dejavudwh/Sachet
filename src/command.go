@@ -1,6 +1,12 @@
+/*
+ * @Author: dejavudwh
+ * @Date: 2021-09-06 11:36:12
+ * @LastEditTime: 2021-09-06 17:54:19
+ */
 package main
 
 import (
+	"Scachet/src/container"
 	"fmt"
 
 	log "github.com/Sirupsen/logrus"
@@ -12,15 +18,15 @@ var initCommand = cli.Command{
 	Name: "init",
 	Usage: `init container process run user's process in container.
 			-- Do not call it outside.`,
-	/*
-	* init container
+	/**
+	* @description: Init container
 	 */
 	Action: func(c *cli.Context) error {
 		log.Infof("Init contanier ...")
 		cmd := c.Args().Get(0)
 		log.Infof("command %s", cmd)
-		// TODO: run init process
-
+		// run init process
+		container.RunContainerInitProcess(cmd, nil)
 		return nil
 	},
 }
@@ -36,8 +42,8 @@ var runCommand = cli.Command{
 			Usage: "enable tty",
 		},
 	},
-	/*
-	* launch container
+	/**
+	* @description: Launch Container
 	 */
 	Action: func(c *cli.Context) error {
 		// determine the length of the command
