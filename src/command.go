@@ -1,11 +1,12 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-06 18:08:21
+ * @LastEditTime: 2021-09-07 16:00:14
  */
 package main
 
 import (
+	"Scachet/src/cgroups/subsystems"
 	"Scachet/src/container"
 	"fmt"
 
@@ -41,6 +42,18 @@ var runCommand = cli.Command{
 			Name:  "ti",
 			Usage: "enable tty",
 		},
+		cli.StringFlag{
+			Name:  "m",
+			Usage: "memory limit",
+		},
+		cli.StringFlag{
+			Name:  "cpushare",
+			Usage: "cpushare limit",
+		},
+		cli.StringFlag{
+			Name:  "cpuset",
+			Usage: "cpuset limit",
+		},
 	},
 	/**
 	* @description: Launch Container
@@ -50,9 +63,15 @@ var runCommand = cli.Command{
 		if len(c.Args()) < 1 {
 			return fmt.Errorf("Missing container command")
 		}
-		cmd := c.Args().Get(0)
+		var cmdArray []string
+		resConf := &subsystems.ResourceConfig{
+			MemoryLimit: c.String("m"),
+			CpuSet:      c.String("cpuset"),
+			CpuShare:    c.String("cpushare"),
+		}
+
 		tty := c.Bool("ti")
-		Run(tty, cmd)
+		Run(tty, cmdArray, resConf)
 		return nil
 	},
 }

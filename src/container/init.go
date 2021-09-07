@@ -1,12 +1,15 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 17:10:24
- * @LastEditTime: 2021-09-06 17:56:23
+ * @LastEditTime: 2021-09-07 16:44:33
  */
 package container
 
 import (
+	"io/ioutil"
 	"os"
+	"os/exec"
+	"strings"
 	"syscall"
 
 	log "github.com/Sirupsen/logrus"
@@ -14,12 +17,10 @@ import (
 
 /**
  * @description: Container is created, this function starts to initialize container
- * @param {string} command: first command
- * @param {[]string} args: command arugument
  * @return {*}
  */
-func RunContainerInitProcess(command string, args []string) error {
-	log.Infof("command %s", command)
+func RunContainerInitProcess() error {
+	cmdArray := readUserCommand()
 
 	/*
 		* mount proc to view process resources later (in mount namespace)
@@ -29,11 +30,30 @@ func RunContainerInitProcess(command string, args []string) error {
 	*/
 	defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
 	syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
-	argv := []string{command}
-	// Will overwrite the init process, and the user process becomes the first process
-	if err := syscall.Exec(command, argv, os.Environ()); err != nil {
+
+	path, err := exec.LookPath(cmdArray[0])
+	if err != nil {
+		log.Errorf("Exec loop path error %v", err)
+		return err
+	}
+	log.Infof("Find path %s", path)
+	// syscall.Exec will overwrite the init process, and the user process becomes the first process
+	if err := syscall.Exec(path, cmdArray[0:], os.Environ()); err != nil {
 		log.Errorf(err.Error())
 	}
 
 	return nil
+}
+
+func readUserCommand() []string {
+	// fd is 3, first file of child process
+	pipe := os.NewFile(uintptr(3), "pipe")
+	msg, err := ioutil.ReadAll(pipe)
+	if err != nil {
+		log.Errorf("init read pipe error %v", err)
+		return nil
+	}
+	msgStr := string(msg)
+
+	return strings.Split(msgStr, " ")
 }
