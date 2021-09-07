@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 23:17:04
- * @LastEditTime: 2021-09-06 23:42:34
+ * @LastEditTime: 2021-09-07 13:38:33
  */
 package subsystems
 
@@ -32,4 +32,6 @@ type Subsystem interface {
 }
 
 // subsystem instance
-var SubsystemsIns = []Subsystem{}
+var SubsystemsIns = []Subsystem{
+	&MemorySubSystem{},
+}
