@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-07 00:04:08
- * @LastEditTime: 2021-09-07 10:30:02
+ * @LastEditTime: 2021-09-07 11:28:49
  */
 package subsystems
 
@@ -25,6 +25,7 @@ type MemorySubSystem struct {
 func (s *MemorySubSystem) Set(cgroupPath string, res *ResourceConfig) error {
 	if subsysCgroupPath, err := GetCgroupPath(s.Name(), cgroupPath, true); err == nil {
 		if res.MemoryLimit != "" {
+			// After getting the cgroup path, write to the memory limit
 			if err := ioutil.WriteFile(path.Join(subsysCgroupPath, "memory.limit_in_bytes"),
 				[]byte(res.MemoryLimit), 0644); err != nil {
 				return fmt.Errorf("set cgroup memory fail %v", err)
@@ -75,10 +76,4 @@ func (s *MemorySubSystem) Apply(cgroupPath string, pid int) error {
  */
 func (s *MemorySubSystem) Name() string {
 	return "memory"
-}
-
-// TODO: get subsystem path
-func GetCgroupPath(subsystem string, cgroupPath string, autoCreate bool) (string, error) {
-
-	return "", nil
 }
