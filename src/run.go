@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:08:11
- * @LastEditTime: 2021-09-07 15:47:47
+ * @LastEditTime: 2021-09-07 18:39:51
  */
 package main
 
@@ -38,7 +38,7 @@ func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig) {
 
 	sendInitCommand(cmdArray, writePipe)
 	parent.Wait()
-	os.Exit(-1)
+	os.Exit(0)
 }
 
 /**
@@ -47,9 +47,9 @@ func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig) {
  * @param {*os.File} writePipe: pipe with child process
  * @return {*}
  */
-func sendInitCommand(comArray []string, writePipe *os.File) {
-	command := strings.Join(comArray, " ")
-	log.Infof("command all is %s", command)
+func sendInitCommand(cmdArray []string, writePipe *os.File) {
+	command := strings.Join(cmdArray, " ")
+	log.Infof("command all is %s", cmdArray)
 	writePipe.WriteString(command)
 	writePipe.Close()
 }

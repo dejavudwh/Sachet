@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-07 16:00:14
+ * @LastEditTime: 2021-09-07 18:42:04
  */
 package main
 
@@ -27,7 +27,7 @@ var initCommand = cli.Command{
 		cmd := c.Args().Get(0)
 		log.Infof("command %s", cmd)
 		// run init process
-		container.RunContainerInitProcess(cmd, nil)
+		container.RunContainerInitProcess()
 		return nil
 	},
 }
@@ -64,6 +64,9 @@ var runCommand = cli.Command{
 			return fmt.Errorf("Missing container command")
 		}
 		var cmdArray []string
+		for _, arg := range c.Args() {
+			cmdArray = append(cmdArray, arg)
+		}
 		resConf := &subsystems.ResourceConfig{
 			MemoryLimit: c.String("m"),
 			CpuSet:      c.String("cpuset"),
