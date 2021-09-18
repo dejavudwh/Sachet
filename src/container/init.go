@@ -1,14 +1,16 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 17:10:24
- * @LastEditTime: 2021-09-07 18:38:39
+ * @LastEditTime: 2021-09-18 20:30:45
  */
 package container
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"syscall"
 
@@ -56,4 +58,47 @@ func readUserCommand() []string {
 	msgStr := string(msg)
 
 	return strings.Split(msgStr, " ")
+}
+
+/**
+ * @description: mount root file system
+ * @param {*}
+ * @return {*}
+ */
+
+func pivotRoot(root string) error {
+	/*
+		* pivot_root is a ways to switch old root to new root
+		* bind mount is just a way to replace the same content with a mount point
+		- MS_BIND: Create a bind mount
+		- MS_REC: Used in conjunction with MS_BIND to create a recursive bind mount
+	*/
+	if err := syscall.Mount(root, root, "bind", syscall.MS_BIND|syscall.MS_REC, ""); err != nil {
+		return fmt.Errorf("Mount rootfs to itself error: %v", err)
+	}
+
+	// create roofs/.pivot_root to store old_root
+	pivotDir := filepath.Join(root, ".pivot_root")
+	if err := os.Mkdir(pivotDir, 0777); err != nil {
+		return fmt.Errorf("pivot_root %v", err)
+	}
+
+	// pivot_root to new rootfs(Now the old old_root is mounted in rootfs/.pivot_root)
+	if err := syscall.PivotRoot(root, pivotDir); err != nil {
+		return fmt.Errorf("pivot_root %v", err)
+	}
+
+	// modify the current working directory to the root directory
+	if err := syscall.Chdir("/"); err != nil {
+		return fmt.Errorf("chdir / %v", err)
+	}
+
+	pivotDir = filepath.Join("/", ".pivot_root")
+	// unmount rootfs/.pivot_root
+	if err := syscall.Unmount(pivotDir, syscall.MNT_DETACH); err != nil {
+		return fmt.Errorf("unmount pivot_root dir %v", err)
+	}
+
+	// remove dir
+	return os.Remove(pivotDir)
 }
