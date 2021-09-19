@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:59:22
- * @LastEditTime: 2021-09-19 14:21:23
+ * @LastEditTime: 2021-09-19 17:32:20
  */
 package container
 
@@ -40,7 +40,7 @@ func NewParentProcess(tty bool) (*exec.Cmd, *os.File) {
 	}
 
 	cmd.ExtraFiles = []*os.File{readPipe}
-	mntURL := "/home/mnt"
+	mntURL := "/home/mnt/"
 	rootURL := "/home/"
 	NewWorkSpace(rootURL, mntURL)
 	// image has been mounted to mntURL
@@ -59,9 +59,9 @@ func NewPipe() (*os.File, *os.File, error) {
 }
 
 /**
- * @description: create a AUFS filesystem as container oot workspace
+ * @description: create a overlayfs filesystem as container root workspace
  * @param {string} rootURL: image path
- * @param {string} mntURL:
+ * @param {string} mntURL: mount path
  * @return {*}
  */
 func NewWorkSpace(rootURL string, mntURL string) {
@@ -100,8 +100,8 @@ func CreateMountPoint(rootURL string, mntURL string) {
 		log.Errorf("Mkdir dir %s error. %v", mntURL, err)
 	}
 
-	dirs := "dirs=" + rootURL + "writeLayer:" + rootURL + "busybox"
-	cmd := exec.Command("mount", "-t", "aufs", "-o", dirs, "none", mntURL)
+	dirs := "lowerdir=" + rootURL + "busybox" + "," + "upperdir=" + rootURL + "writeLayer" + "," + "workdir=" + rootURL + "tmpwork"
+	cmd := exec.Command("mount", "-t", "overlay", "overlay", "-o", dirs, mntURL)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
