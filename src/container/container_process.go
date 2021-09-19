@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:59:22
- * @LastEditTime: 2021-09-07 15:50:58
+ * @LastEditTime: 2021-09-19 11:56:20
  */
 package container
 
@@ -40,6 +40,7 @@ func NewParentProcess(tty bool) (*exec.Cmd, *os.File) {
 	}
 
 	cmd.ExtraFiles = []*os.File{readPipe}
+	cmd.Dir = "/busybox"
 	return cmd, writePipe
 }
 

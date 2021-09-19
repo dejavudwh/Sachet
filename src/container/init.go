@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 17:10:24
- * @LastEditTime: 2021-09-18 20:30:45
+ * @LastEditTime: 2021-09-19 11:57:14
  */
 package container
 
@@ -23,15 +23,11 @@ import (
  */
 func RunContainerInitProcess() error {
 	cmdArray := readUserCommand()
+	if cmdArray == nil || len(cmdArray) == 0 {
+		return fmt.Errorf("Run container get user command error, cmdArray is nil")
+	}
 
-	/*
-		* mount proc to view process resources later (in mount namespace)
-		- MS_NOEXEC: Do not allow other programs to run in this filesystem
-		- MS_NOSUID: When running the program, set-user-ID or set-group-ID is not allowed
-		- MS_NODEV: default parameter
-	*/
-	defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
-	syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
+	setUpMount()
 
 	path, err := exec.LookPath(cmdArray[0])
 	if err != nil {
@@ -61,8 +57,36 @@ func readUserCommand() []string {
 }
 
 /**
- * @description: mount root file system
+ * @description: init mount point
  * @param {*}
+ * @return {*}
+ */
+func setUpMount() {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Errorf("Get current location error %v", err)
+	}
+
+	log.Infof("Current location is %s", pwd)
+	// switch root
+	pivotRoot(pwd)
+
+	/*
+		* mount proc to view process resources later (in mount namespace)
+		- MS_NOEXEC: Do not allow other programs to run in this filesystem
+		- MS_NOSUID: When running the program, set-user-ID or set-group-ID is not allowed
+		- MS_NODEV: default parameter
+	*/
+	defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
+	syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), "")
+
+	// mount tmpfs, tmpfs is a memory-based file system
+	syscall.Mount("tmpfs", "/dev", "tmpfs", syscall.MS_NOSUID|syscall.MS_STRICTATIME, "mode=755")
+}
+
+/**
+ * @description: mount root file system
+ * @param {*}: dir path to be replaced as root
  * @return {*}
  */
 
