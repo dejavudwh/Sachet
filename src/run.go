@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:08:11
- * @LastEditTime: 2021-09-07 18:39:51
+ * @LastEditTime: 2021-09-19 17:40:02
  */
 package main
 
@@ -38,6 +38,10 @@ func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig) {
 
 	sendInitCommand(cmdArray, writePipe)
 	parent.Wait()
+
+	mntURL := "/home/mnt/"
+	rootURL := "/home/"
+	container.DeleteWorkSpace(rootURL, mntURL)
 	os.Exit(0)
 }
 

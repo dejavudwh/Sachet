@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:59:22
- * @LastEditTime: 2021-09-19 17:32:20
+ * @LastEditTime: 2021-09-19 17:36:04
  */
 package container
 
@@ -119,4 +119,35 @@ func PathExists(path string) (bool, error) {
 	}
 
 	return false, err
+}
+
+/**
+ * @description: Delete the overlayfs filesystem while container exit
+ * @param {string} rootURL: image path
+ * @param {string} mntURL: mount path
+ * @return {*}
+ */
+func DeleteWorkSpace(rootURL string, mntURL string) {
+	DeleteMountPoint(rootURL, mntURL)
+	DeleteWriteLayer(rootURL)
+}
+
+func DeleteMountPoint(rootURL string, mntURL string) {
+	cmd := exec.Command("umount", mntURL)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		log.Errorf("%v", err)
+	}
+	if err := os.RemoveAll(mntURL); err != nil {
+		log.Errorf("Remove dir %s error %v", mntURL, err)
+	}
+}
+
+func DeleteWriteLayer(rootURL string) {
+	writeURL := rootURL + "writeLayer/"
+	if err := os.RemoveAll(writeURL); err != nil {
+		log.Errorf("Remove dir %s error %v", writeURL, err)
+	}
 }
