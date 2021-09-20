@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:08:11
- * @LastEditTime: 2021-09-20 08:51:21
+ * @LastEditTime: 2021-09-20 19:12:38
  */
 package main
 
@@ -24,6 +24,10 @@ import (
  */
 func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume string) {
 	parent, writePipe := container.NewParentProcess(tty, volume)
+	if parent == nil {
+		log.Errorf("New parent process error")
+		return
+	}
 	if err := parent.Start(); err != nil {
 		log.Error(err)
 	}
@@ -37,7 +41,9 @@ func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume str
 	cgroupManager.Apply(parent.Process.Pid)
 
 	sendInitCommand(cmdArray, writePipe)
-	parent.Wait()
+	if tty {
+		parent.Wait()
+	}
 
 	mntURL := "/home/mnt/"
 	rootURL := "/home/"

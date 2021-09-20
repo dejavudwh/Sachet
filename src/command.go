@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-20 17:27:17
+ * @LastEditTime: 2021-09-20 18:05:19
  */
 package main
 
@@ -42,6 +42,10 @@ var runCommand = cli.Command{
 			Name:  "ti",
 			Usage: "enable tty",
 		},
+		cli.BoolFlag{
+			Name:  "d",
+			Usage: "detach container",
+		},
 		cli.StringFlag{
 			Name:  "m",
 			Usage: "memory limit",
@@ -79,6 +83,11 @@ var runCommand = cli.Command{
 
 		// io redirect
 		tty := c.Bool("ti")
+		// backgroud
+		detach := c.Bool("d")
+		if tty && detach {
+			return fmt.Errorf("ti and d paramter can not both provided")
+		}
 		// volume
 		volume := c.String("v")
 		Run(tty, cmdArray, resConf, volume)
