@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-05 23:09:31
- * @LastEditTime: 2021-09-20 17:44:07
+ * @LastEditTime: 2021-09-20 20:47:36
  */
 package main
 
@@ -27,6 +27,7 @@ func main() {
 		initCommand,
 		runCommand,
 		commitCommand,
+		listCommand,
 	}
 
 	// init logrus

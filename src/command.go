@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-20 18:05:19
+ * @LastEditTime: 2021-09-20 20:28:24
  */
 package main
 
@@ -62,6 +62,10 @@ var runCommand = cli.Command{
 			Name:  "v",
 			Usage: "volume",
 		},
+		cli.StringFlag{
+			Name:  "name",
+			Usage: "container name",
+		},
 	},
 	/**
 	* @description: Launch Container
@@ -90,7 +94,8 @@ var runCommand = cli.Command{
 		}
 		// volume
 		volume := c.String("v")
-		Run(tty, cmdArray, resConf, volume)
+		containerName := c.String("name")
+		Run(tty, cmdArray, resConf, volume, containerName)
 		return nil
 	},
 }
@@ -105,6 +110,17 @@ var commitCommand = cli.Command{
 		}
 		imageName := c.Args().Get(0)
 		commitContainer(imageName)
+
+		return nil
+	},
+}
+
+// list container
+var listCommand = cli.Command{
+	Name:  "ps",
+	Usage: "list all the containers",
+	Action: func(c *cli.Context) error {
+		ListContainers()
 
 		return nil
 	},

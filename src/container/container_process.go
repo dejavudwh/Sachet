@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:59:22
- * @LastEditTime: 2021-09-20 17:30:01
+ * @LastEditTime: 2021-09-20 20:52:17
  */
 package container
 
@@ -13,6 +13,23 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 )
+
+var (
+	RUNNING             string = "running"
+	STOP                string = "stopped"
+	Exit                string = "exited"
+	DefaultInfoLocation string = "/var/run/sachet/%s/"
+	ConfigName          string = "config.json"
+)
+
+type ContainerInfo struct {
+	Pid         string `json:"pid"`
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Command     string `json:"command"` //init command
+	CreatedTime string `json:"createTime"`
+	Status      string `json:"status"`
+}
 
 /**
  * @description: Set up the environment and create a new command to create a new process
