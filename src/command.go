@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-20 11:51:11
+ * @LastEditTime: 2021-09-20 17:27:17
  */
 package main
 
@@ -82,6 +82,21 @@ var runCommand = cli.Command{
 		// volume
 		volume := c.String("v")
 		Run(tty, cmdArray, resConf, volume)
+		return nil
+	},
+}
+
+// commit container
+var commitCommand = cli.Command{
+	Name:  "commit",
+	Usage: "commit a container into inage",
+	Action: func(c *cli.Context) error {
+		if len(c.Args()) < 1 {
+			return fmt.Errorf("Missing container name")
+		}
+		imageName := c.Args().Get(0)
+		commitContainer(imageName)
+
 		return nil
 	},
 }

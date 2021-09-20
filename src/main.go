@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-05 23:09:31
- * @LastEditTime: 2021-09-06 17:46:46
+ * @LastEditTime: 2021-09-20 17:44:07
  */
 package main
 
@@ -26,6 +26,7 @@ func main() {
 	app.Commands = []cli.Command{
 		initCommand,
 		runCommand,
+		commitCommand,
 	}
 
 	// init logrus

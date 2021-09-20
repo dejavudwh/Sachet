@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:59:22
- * @LastEditTime: 2021-09-20 17:12:10
+ * @LastEditTime: 2021-09-20 17:30:01
  */
 package container
 
@@ -41,6 +41,7 @@ func NewParentProcess(tty bool, volume string) (*exec.Cmd, *os.File) {
 	}
 
 	cmd.ExtraFiles = []*os.File{readPipe}
+	// TODO: hard code
 	mntURL := "/home/mnt/"
 	rootURL := "/home/"
 	NewWorkSpace(rootURL, mntURL, volume)
@@ -134,7 +135,7 @@ func MountVolume(rootURL string, mntURL string, volumeURLs []string) {
 	if err := os.Mkdir(containerVolumeURL, 0777); err != nil {
 		log.Infof("Mkdir container dir %s error. %v", containerVolumeURL, err)
 	}
-
+	// TODO: lowerdir is hard code
 	dirs := "lowerdir=" + rootURL + "tempVolume" + "," + "upperdir=" + parentUrl + "," + "workdir=" + rootURL + "tmpwork2"
 	cmd := exec.Command("mount", "-t", "overlay", "overlay", "-o", dirs, containerVolumeURL)
 	log.Info(cmd)
