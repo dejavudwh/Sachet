@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:08:11
- * @LastEditTime: 2021-09-19 17:40:02
+ * @LastEditTime: 2021-09-20 08:51:21
  */
 package main
 
@@ -22,8 +22,8 @@ import (
  * @param {subsystems.ResourceConfig} res: resource limitation config
  * @return {*}
  */
-func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig) {
-	parent, writePipe := container.NewParentProcess(tty)
+func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume string) {
+	parent, writePipe := container.NewParentProcess(tty, volume)
 	if err := parent.Start(); err != nil {
 		log.Error(err)
 	}
@@ -41,7 +41,7 @@ func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig) {
 
 	mntURL := "/home/mnt/"
 	rootURL := "/home/"
-	container.DeleteWorkSpace(rootURL, mntURL)
+	container.DeleteWorkSpace(rootURL, mntURL, volume)
 	os.Exit(0)
 }
 

@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 17:10:24
- * @LastEditTime: 2021-09-19 11:57:14
+ * @LastEditTime: 2021-09-20 12:06:59
  */
 package container
 
@@ -29,6 +29,7 @@ func RunContainerInitProcess() error {
 
 	setUpMount()
 
+	log.Info(cmdArray)
 	path, err := exec.LookPath(cmdArray[0])
 	if err != nil {
 		log.Errorf("Exec loop path error %v", err)

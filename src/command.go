@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-07 18:42:04
+ * @LastEditTime: 2021-09-20 11:51:11
  */
 package main
 
@@ -54,6 +54,10 @@ var runCommand = cli.Command{
 			Name:  "cpuset",
 			Usage: "cpuset limit",
 		},
+		cli.StringFlag{
+			Name:  "v",
+			Usage: "volume",
+		},
 	},
 	/**
 	* @description: Launch Container
@@ -73,8 +77,11 @@ var runCommand = cli.Command{
 			CpuShare:    c.String("cpushare"),
 		}
 
+		// io redirect
 		tty := c.Bool("ti")
-		Run(tty, cmdArray, resConf)
+		// volume
+		volume := c.String("v")
+		Run(tty, cmdArray, resConf, volume)
 		return nil
 	},
 }
