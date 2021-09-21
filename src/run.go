@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:08:11
- * @LastEditTime: 2021-09-21 17:12:23
+ * @LastEditTime: 2021-09-21 20:36:02
  */
 package main
 
@@ -52,7 +52,6 @@ func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume str
 	// create cgroup manager, and call Set and Apply method to limit resource
 	cgroupManager := cgroups.NewCgroupManager("Sachet")
 	defer cgroupManager.Destroy()
-
 	cgroupManager.Set(res)
 	// add container process to cgroup
 	cgroupManager.Apply(parent.Process.Pid)
@@ -61,12 +60,11 @@ func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume str
 	if tty {
 		parent.Wait()
 		deleteContainerInfo(containerName)
-	}
 
-	mntURL := "/home/mnt/"
-	rootURL := "/home/"
-	container.DeleteWorkSpace(rootURL, mntURL, volume)
-	os.Exit(0)
+		mntURL := "/home/mnt/"
+		rootURL := "/home/"
+		container.DeleteWorkSpace(rootURL, mntURL, volume)
+	}
 }
 
 /**

@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-21 17:12:54
+ * @LastEditTime: 2021-09-21 20:18:06
  */
 package main
 
@@ -9,6 +9,7 @@ import (
 	"Scachet/src/cgroups/subsystems"
 	"Scachet/src/container"
 	"fmt"
+	"os"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -92,6 +93,7 @@ var runCommand = cli.Command{
 		if tty && detach {
 			return fmt.Errorf("ti and d paramter can not both provided")
 		}
+		log.Infof("createTty %v", tty)
 		// volume
 		volume := c.String("v")
 		containerName := c.String("name")
@@ -135,6 +137,32 @@ var logCommand = cli.Command{
 		}
 		containerName := context.Args().Get(0)
 		logContainer(containerName)
+		return nil
+	},
+}
+
+// exec container
+var execCommand = cli.Command{
+	Name:  "exec",
+	Usage: "exec a command into container",
+	Action: func(context *cli.Context) error {
+		//This is for callback
+		if os.Getenv(ENV_EXEC_PID) != "" {
+			log.Infof("pid callback pid %s", os.Getgid())
+			return nil
+		}
+		log.Infof("first call")
+		if len(context.Args()) < 2 {
+			return fmt.Errorf("Missing container name or command")
+		}
+
+		containerName := context.Args().Get(0)
+		var commandArray []string
+		for _, arg := range context.Args().Tail() {
+			commandArray = append(commandArray, arg)
+		}
+
+		ExecContainer(containerName, commandArray)
 		return nil
 	},
 }
