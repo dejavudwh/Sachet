@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-21 19:16:53
- * @LastEditTime: 2021-09-21 19:39:26
+ * @LastEditTime: 2021-09-21 21:01:05
  */
 package main
 
@@ -28,7 +28,7 @@ const ENV_EXEC_CMD = "sachet_cmd"
  * @return {*}
  */
 func ExecContainer(containerName string, cmdArray []string) {
-	pid, err := getContainerPidByName(containerName)
+	pid, err := GetContainerPidByName(containerName)
 	if err != nil {
 		log.Errorf("Exec container getContainerPidByName %s error %v", containerName, err)
 		return
@@ -57,7 +57,7 @@ func ExecContainer(containerName string, cmdArray []string) {
  * @param {string} containerName: container name
  * @return {*}
  */
-func getContainerPidByName(containerName string) (string, error) {
+func GetContainerPidByName(containerName string) (string, error) {
 	dirURL := fmt.Sprintf(container.DefaultInfoLocation, containerName)
 	configFilePath := dirURL + container.ConfigName
 	contentBytes, err := ioutil.ReadFile(configFilePath)

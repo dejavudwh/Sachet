@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-21 20:18:06
+ * @LastEditTime: 2021-09-21 21:14:49
  */
 package main
 
@@ -163,6 +163,20 @@ var execCommand = cli.Command{
 		}
 
 		ExecContainer(containerName, commandArray)
+		return nil
+	},
+}
+
+// stop container
+var stopCommand = cli.Command{
+	Name:  "stop",
+	Usage: "stop a container",
+	Action: func(context *cli.Context) error {
+		if len(context.Args()) < 1 {
+			return fmt.Errorf("Missing container name")
+		}
+		containerName := context.Args().Get(0)
+		stopContainer(containerName)
 		return nil
 	},
 }
