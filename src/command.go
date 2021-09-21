@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-21 21:14:49
+ * @LastEditTime: 2021-09-21 21:31:03
  */
 package main
 
@@ -177,6 +177,20 @@ var stopCommand = cli.Command{
 		}
 		containerName := context.Args().Get(0)
 		stopContainer(containerName)
+		return nil
+	},
+}
+
+// remove container
+var removeCommand = cli.Command{
+	Name:  "rm",
+	Usage: "remove unused containers",
+	Action: func(context *cli.Context) error {
+		if len(context.Args()) < 1 {
+			return fmt.Errorf("Missing container name")
+		}
+		containerName := context.Args().Get(0)
+		removeContainer(containerName)
 		return nil
 	},
 }
