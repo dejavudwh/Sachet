@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 11:36:12
- * @LastEditTime: 2021-09-20 20:28:24
+ * @LastEditTime: 2021-09-21 17:12:54
  */
 package main
 
@@ -122,6 +122,19 @@ var listCommand = cli.Command{
 	Action: func(c *cli.Context) error {
 		ListContainers()
 
+		return nil
+	},
+}
+
+var logCommand = cli.Command{
+	Name:  "logs",
+	Usage: "print logs of a container",
+	Action: func(context *cli.Context) error {
+		if len(context.Args()) < 1 {
+			return fmt.Errorf("Please input your container name")
+		}
+		containerName := context.Args().Get(0)
+		logContainer(containerName)
 		return nil
 	},
 }

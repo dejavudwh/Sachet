@@ -1,11 +1,12 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:59:22
- * @LastEditTime: 2021-09-20 20:52:17
+ * @LastEditTime: 2021-09-21 17:22:32
  */
 package container
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -20,6 +21,7 @@ var (
 	Exit                string = "exited"
 	DefaultInfoLocation string = "/var/run/sachet/%s/"
 	ConfigName          string = "config.json"
+	ContainerLogFile    string = "container.log"
 )
 
 type ContainerInfo struct {
@@ -37,7 +39,7 @@ type ContainerInfo struct {
  * @param {string} command: user first command and init command
  * @return {*}
  */
-func NewParentProcess(tty bool, volume string) (*exec.Cmd, *os.File) {
+func NewParentProcess(tty bool, volume string, containerName string) (*exec.Cmd, *os.File) {
 	readPipe, writePipe, err := NewPipe()
 	if err != nil {
 		log.Errorf("New pipe error %v", err)
@@ -55,6 +57,19 @@ func NewParentProcess(tty bool, volume string) (*exec.Cmd, *os.File) {
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
+	} else {
+		dirURL := fmt.Sprintf(DefaultInfoLocation, containerName)
+		if err := os.MkdirAll(dirURL, 0622); err != nil {
+			log.Errorf("NewParentProcess mkdir %s error %v", dirURL, err)
+			return nil, nil
+		}
+		stdLogFilePath := dirURL + ContainerLogFile
+		stdLogFile, err := os.Create(stdLogFilePath)
+		if err != nil {
+			log.Errorf("NewParentProcess create file %s error %v", stdLogFilePath, err)
+			return nil, nil
+		}
+		cmd.Stdout = stdLogFile
 	}
 
 	cmd.ExtraFiles = []*os.File{readPipe}

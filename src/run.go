@@ -1,7 +1,7 @@
 /*
  * @Author: dejavudwh
  * @Date: 2021-09-06 14:08:11
- * @LastEditTime: 2021-09-20 20:44:02
+ * @LastEditTime: 2021-09-21 17:12:23
  */
 package main
 
@@ -28,7 +28,12 @@ import (
  * @return {*}
  */
 func Run(tty bool, cmdArray []string, res *subsystems.ResourceConfig, volume string, containerName string) {
-	parent, writePipe := container.NewParentProcess(tty, volume)
+	containerID := randStringBytes(10)
+	if containerName == "" {
+		containerName = containerID
+	}
+
+	parent, writePipe := container.NewParentProcess(tty, volume, containerName)
 	if parent == nil {
 		log.Errorf("New parent process error")
 		return
